@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Monday, 19 November 2018
 ## Synopsis: Script to test out functions etc.
-## Time-stamp: <2018-11-19 09:35:27 (slane)>
+## Time-stamp: <2018-11-26 16:35:51 (slane)>
 ################################################################################
 ################################################################################
 library(here)
@@ -16,8 +16,11 @@ library(ggplot2)
 library(bayesplot)
 source(here("R/arrival-rates.R"))
 
-## Generate initial site arrivals data.
-arrival_data <- arrivals(10, 10, "constant")
+## Can generate a single arrivals set:
+arrival_data <- arrivals(10, 10, constant)
+
+## Or simulations:
+sim_arrival_data <- sim_arrivals(linear3, 10, 10, 100)
 
 ################################################################################
 ## Generate detections data (constant model initially)

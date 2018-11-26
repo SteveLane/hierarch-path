@@ -4,56 +4,56 @@
 ## Author: Steve Lane
 ## Date: Friday, 16 November 2018
 ## Synopsis: Functions for generating simulated arrival and detection data.
-## Time-stamp: <2018-11-26 15:23:05 (slane)>
+## Time-stamp: <2018-11-26 16:32:15 (slane)>
 ################################################################################
 ################################################################################
 #' Generates arrival rates, depending on the type of model specified.
 #' 
 #' @param T Integer. Number of time periods.
 #' @param S Integer. Number of sites.
-#' @param model Character. Character value determining arrival model.
+#' @param model function name. Passed as an unquoted variable.
 arrivals <- function(T, S, model){
     df <- expand.grid(
         site = seq_len(S),
         time = seq_len(T)
     ) %>%
         dplyr::as_data_frame()
-    switch(model,
-        constant = {
-            df <- df %>%
-                dplyr::mutate(N = 50)
-        },
-        linear1 = {
-            df <- df %>%
-                dplyr::group_by(site) %>%
-                tidyr::nest() %>%
-                dplyr::mutate(
-                    df = purrr::map(data, ~ linear1(.x$time))
-                ) %>%
-                tidyr::unnest()
-        },
-        linear2 = {
-            df <- df %>%
-                dplyr::group_by(site) %>%
-                tidyr::nest() %>%
-                dplyr::mutate(
-                    df = purrr::map(data, ~ linear2(.x$time))
-                ) %>%
-                tidyr::unnest()
-        }
-    )
+    model_nm <- enquo(model)
+    df <- df %>%
+        dplyr::group_by(site) %>%
+        tidyr::nest() %>%
+        dplyr::mutate(
+            df = purrr::map(data, !!model_nm)
+        ) %>%
+        tidyr::unnest()
     df
+}
+
+################################################################################
+#' Function to calculate arrival rate as a constant.
+#'
+#' This function is required so that the call may be made using tidy eval.
+#'
+#' @param df data frame.
+#'
+#' @return dataframe containing the arrival rate as N = 50.
+constant <- function(df) {
+    n <- nrow(df)
+    dplyr::data_frame(
+        N = rep(50, n)
+    )
 }
 
 ################################################################################
 #' Function to calculate arrival rate as a linear combination of time.
 #'
-#' @param time numeric. Time input.
+#' @param df data frame. Must contain a \code{time} column.
 #'
 #' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
 #'     arrival rate as Poisson(10 + 10X). The (true) underlying arrival rate is
 #'     also returned.
-linear1 <- function(time) {
+linear1 <- function(df) {
+    time <- df[["time"]]
     n <- length(time)
     xvar <- 5 + rnorm(n, mean = 0.25 * time, sd = 1)
     rate <- 10 + 10*xvar
@@ -66,12 +66,13 @@ linear1 <- function(time) {
 ################################################################################
 #' Function to calculate arrival rate dependent on time and site effects.
 #'
-#' @param time numeric. Time input.
+#' @param df data frame. Must contain a \code{time} column.
 #' 
 #' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
 #'     arrival rate as Poisson(10 + 10X + site), where site is N(0, 3). The
 #'     (true) underlying arrival rate is also returned. 
-linear2 <- function(time) {
+linear2 <- function(df) {
+    time <- df[["time"]]
     site_effect <- rnorm(1, 0, 3)
     n <- length(time)
     xvar <- 5 + rnorm(n, mean = 0.25 * time, sd = 1)
@@ -83,9 +84,32 @@ linear2 <- function(time) {
 }
 
 ################################################################################
+#' Function to calculate arrival rate dependent on time and site effects.
+#'
+#' @param df data frame. Must contain a \code{time} column.
+#' 
+#' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
+#'     arrival rate as Poisson(10 + (10 + site_slope)X + site), where site is
+#'     N(0, 3) and site_slope is N(0, 1). The (true) underlying arrival rate is
+#'     also returned.
+linear3 <- function(df) {
+    time <- df[["time"]]
+    site_effect <- rnorm(1, 0, 3)
+    site_slope <- rnorm(1, 0, 1)
+    n <- length(time)
+    xvar <- 5 + rnorm(n, mean = 0.25 * time, sd = 1)
+    rate <- 10 + (10 + site_slope)*xvar + site_effect
+    n_arrival <- rpois(n, rate)
+    dplyr::data_frame(
+        xvar = xvar, N = n_arrival, rate = rate, site_effect = site_effect,
+        site_slope = site_slope
+    )
+}
+
+################################################################################
 #' Simulates r replicates of arrival rates.
 #'
-#' @param model character for arrival model.
+#' @param model function name. Passed as an unquoted variable.
 #' @param T Integer. Number of time periods.
 #' @param S Integer. Number of sites.
 #' @param r integer. Number of replicates for simulation.

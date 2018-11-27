@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Friday, 16 November 2018
 ## Synopsis: Functions for generating simulated arrival and detection data.
-## Time-stamp: <2018-11-27 12:42:39 (slane)>
+## Time-stamp: <2018-11-27 12:48:24 (slane)>
 ################################################################################
 ################################################################################
 #' Generates arrival rates, depending on the type of model specified.
@@ -12,7 +12,8 @@
 #' @param T Integer. Number of time periods.
 #' @param S Integer. Number of sites.
 #' @param model function name. Passed as an unquoted variable.
-arrivals <- function(T, S, model){
+#' @param D integer. Arrival rate for constant model.
+arrivals <- function(T, S, model, D = 50){
     df <- expand.grid(
         site = seq_len(S),
         time = seq_len(T)
@@ -23,7 +24,7 @@ arrivals <- function(T, S, model){
         dplyr::group_by(site) %>%
         tidyr::nest() %>%
         dplyr::mutate(
-            df = purrr::map(data, !!model_nm)
+            df = purrr::map(data, !!model_nm, D)
         ) %>%
         tidyr::unnest()
     df
@@ -35,12 +36,13 @@ arrivals <- function(T, S, model){
 #' This function is required so that the call may be made using tidy eval.
 #'
 #' @param df data frame.
+#' @param D integer. Arrival rate for constant model. Defaults to 50.
 #' 
-#' @return dataframe containing the arrival rate as N = 50.
-constant_arrival <- function(df) {
+#' @return dataframe containing the arrival rate as N = D.
+constant_arrival <- function(df, D = 50) {
 n <- nrow(df)
     dplyr::data_frame(
-        N = rep(50, n)
+        N = rep(D, n)
     )
 }
 
@@ -113,12 +115,13 @@ linear3 <- function(df) {
 #' @param T Integer. Number of time periods.
 #' @param S Integer. Number of sites.
 #' @param r integer. Number of replicates for simulation.
+#' @param D integer. Arrival rate for constant model.
 #'
 #' @return data frame consisting of simulation replicates.
-sim_arrivals <- function(model, T, S, r) {
+sim_arrivals <- function(model, T, S, r, D = 50) {
     df <- replicate(
         n = r,
-        expr = arrivals(T = T, S = S, model = model),
+        expr = arrivals(T = T, S = S, model = model, D),
         simplify = FALSE
     )
     df <- bind_rows(df, .id = "replicate")

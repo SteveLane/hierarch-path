@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Friday, 16 November 2018
 ## Synopsis: Functions for generating simulated arrival and detection data.
-## Time-stamp: <2018-11-26 16:32:15 (slane)>
+## Time-stamp: <2018-11-27 12:42:39 (slane)>
 ################################################################################
 ################################################################################
 #' Generates arrival rates, depending on the type of model specified.
@@ -35,10 +35,10 @@ arrivals <- function(T, S, model){
 #' This function is required so that the call may be made using tidy eval.
 #'
 #' @param df data frame.
-#'
+#' 
 #' @return dataframe containing the arrival rate as N = 50.
-constant <- function(df) {
-    n <- nrow(df)
+constant_arrival <- function(df) {
+n <- nrow(df)
     dplyr::data_frame(
         N = rep(50, n)
     )
@@ -48,7 +48,7 @@ constant <- function(df) {
 #' Function to calculate arrival rate as a linear combination of time.
 #'
 #' @param df data frame. Must contain a \code{time} column.
-#'
+#' 
 #' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
 #'     arrival rate as Poisson(10 + 10X). The (true) underlying arrival rate is
 #'     also returned.

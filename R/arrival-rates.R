@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Friday, 16 November 2018
 ## Synopsis: Functions for generating simulated arrival and detection data.
-## Time-stamp: <2018-11-27 12:48:24 (slane)>
+## Time-stamp: <2018-11-30 10:01:03 (slane)>
 ################################################################################
 ################################################################################
 #' Generates arrival rates, depending on the type of model specified.
@@ -54,7 +54,7 @@ n <- nrow(df)
 #' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
 #'     arrival rate as Poisson(10 + 10X). The (true) underlying arrival rate is
 #'     also returned.
-linear1 <- function(df) {
+linear_arrival1 <- function(df, ...) {
     time <- df[["time"]]
     n <- length(time)
     xvar <- 5 + rnorm(n, mean = 0.25 * time, sd = 1)
@@ -73,7 +73,7 @@ linear1 <- function(df) {
 #' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
 #'     arrival rate as Poisson(10 + 10X + site), where site is N(0, 3). The
 #'     (true) underlying arrival rate is also returned. 
-linear2 <- function(df) {
+linear_arrival2 <- function(df, ...) {
     time <- df[["time"]]
     site_effect <- rnorm(1, 0, 3)
     n <- length(time)
@@ -94,7 +94,7 @@ linear2 <- function(df) {
 #'     arrival rate as Poisson(10 + (10 + site_slope)X + site), where site is
 #'     N(0, 3) and site_slope is N(0, 1). The (true) underlying arrival rate is
 #'     also returned.
-linear3 <- function(df) {
+linear_arrival3 <- function(df, ...) {
     time <- df[["time"]]
     site_effect <- rnorm(1, 0, 3)
     site_slope <- rnorm(1, 0, 1)

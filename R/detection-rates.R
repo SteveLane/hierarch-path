@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Tuesday, 27 November 2018
 ## Synopsis: Function definitions for generating simulated detection rates.
-## Time-stamp: <2018-11-30 12:56:31 (slane)>
+## Time-stamp: <2018-11-30 14:47:53 (slane)>
 ################################################################################
 #' Generates detection rates
 #'
@@ -28,20 +28,45 @@ constant_detection <- function(df, p = 0.6) {
 ################################################################################
 #' Generates detection rates
 #'
+#' \code{linear_detection1} calculates detections as a linear function of a
+#' time-varying covariate (independent to that used in the arrival rate).
+#'
+#' @param df data frame. Holds the arrival rate data. Must contain a \code{N}
+#'     column.
+#'
+#' @return dataframe containing the number of detections, D = Binomial(N, p) the
+#'     underlying detection probability p, and the predictor xvar_detection.
+#'     Where p = logit(-1 + X), X = Normal(0.1 * time, 0.1).
+linear_detection1 <- function(df, ...) {
+    time <- df[["time"]]
+    N <- df[["N"]]
+    n <- length(N)
+    X <- rnorm(n, mean = 0.1 * time, sd = 0.1)
+    p <- plogis(-1 + X)
+    D <- rbinom(n, N, p)
+    dplyr::data_frame(
+        xvar_detection = X, p = p, D = D
+    )
+}
+
+################################################################################
+#' Generates detection rates
+#'
 #' \code{linear_detection2} calculates detections as a linear function of the
 #' same covariate that is used in the arrival rate. Note:
 #' \code{linear_detection2} can only be used in conjuction with non-constant
 #' arrivals due to the presence of the covariate term.
 #'
-#' @param df data frame. Holds the arrival rate data. Must contain a \code{xvar}
-#'     column.
+#' @param df data frame. Holds the arrival rate data. Must contain a
+#'     \code{xvar_arrival} and \code{N} column.
 #'
 #' @return dataframe containing the number of detections, D = Binomial(N, p) and
-#'     the underlying detection probability p. Where p = logit(-3 + 0.6 * X).
-linear_detection2 <- function(df) {
+#'     the underlying detection probability p.
+#'     Where p = logit(-3 + 0.6 * xvar_arrival).
+linear_detection2 <- function(df, ...) {
     N <- df[["N"]]
     n <- length(N)
-    X <- df[["xvar"]]
+    X <- df[["xvar_arrival"]]
     p <- plogis(-3 + 0.6 * X)
     D <- rbinom(n, N, p)
     dplyr::data_frame(

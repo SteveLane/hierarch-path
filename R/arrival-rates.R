@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Friday, 16 November 2018
 ## Synopsis: Functions for generating simulated arrival and detection data.
-## Time-stamp: <2018-11-30 10:01:03 (slane)>
+## Time-stamp: <2018-11-30 14:34:58 (slane)>
 ################################################################################
 ################################################################################
 #' Generates arrival rates, depending on the type of model specified.
@@ -61,7 +61,7 @@ linear_arrival1 <- function(df, ...) {
     rate <- 10 + 10*xvar
     n_arrival <- rpois(n, rate)
     dplyr::data_frame(
-        xvar = xvar, N = n_arrival, rate = rate
+        xvar_arrival = xvar, N = n_arrival, rate = rate
     )
 }
 
@@ -81,7 +81,8 @@ linear_arrival2 <- function(df, ...) {
     rate <- 10 + 10*xvar + site_effect
     n_arrival <- rpois(n, rate)
     dplyr::data_frame(
-        xvar = xvar, N = n_arrival, rate = rate, site_effect = site_effect
+        xvar_arrival = xvar, N = n_arrival, rate = rate,
+        site_effect = site_effect
     )
 }
 
@@ -103,8 +104,8 @@ linear_arrival3 <- function(df, ...) {
     rate <- 10 + (10 + site_slope)*xvar + site_effect
     n_arrival <- rpois(n, rate)
     dplyr::data_frame(
-        xvar = xvar, N = n_arrival, rate = rate, site_effect = site_effect,
-        site_slope = site_slope
+        xvar_arrival = xvar, N = n_arrival, rate = rate,
+        site_effect = site_effect, site_slope = site_slope
     )
 }
 

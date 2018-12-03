@@ -1,0 +1,20 @@
+# Linear arrival rate, constant detection rate
+model {
+  # priors
+  # for the arrival rate regression
+  alpha ~ dnorm(0, 1)
+  beta ~ dnorm(0, 1)
+  # for the detection probability
+  p ~ dbeta(2, 2)
+
+  # models
+  for (i in 1:n) {
+    # model for the arrival process
+    N[i] ~ dpois(exp(log_lambda[i]))
+    # model for the detection process
+    count[i] ~ dbinom(p, N[i])
+
+    # regression for arrival process
+    log_lambda[i] <- alpha + beta * x[i]
+  }
+}

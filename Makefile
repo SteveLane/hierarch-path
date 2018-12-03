@@ -1,5 +1,5 @@
 # Makefile
-# Time-stamp: <2018-12-04 09:27:32 (slane)>
+# Time-stamp: <2018-12-04 09:28:56 (slane)>
 .PHONY: all build-docker install-packages clean-manuscripts clobber
 
 all: install-packages data/data.rds manuscripts/manuscript.pdf
@@ -21,7 +21,7 @@ build-docker: .build.docker
 .PHONY: jags-test
 jags-test: figs/jags-testing/ca-cd-tests.pdf \
 	figs/jags-testing/ca-ld1-tests.pdf \
-	figs/jags-testing/ca-ld2-tests.pdf
+	figs/jags-testing/ca-ld3-tests.pdf
 figs/jags-testing/ca-cd-tests.pdf: R/jags-testing-ca-cd.R \
 	scripts/constant.jag
 	mkdir -p figs/jags-testing \

@@ -2,8 +2,8 @@
 model {
   # priors
   # for the arrival rate regression
-  alpha ~ dnorm(0, 1)
-  beta ~ dnorm(0, 1)
+  alpha_arrival ~ dnorm(0, 1)
+  beta_arrival ~ dnorm(0, 1)
   # for the detection probability
   p ~ dbeta(2, 2)
 
@@ -15,6 +15,6 @@ model {
     count[i] ~ dbinom(p, N[i])
 
     # regression for arrival process
-    log_lambda[i] <- alpha + beta * x[i]
+    log_lambda[i] <- alpha_arrival + beta_arrival * x[i]
   }
 }

@@ -1,5 +1,5 @@
 # Makefile
-# Time-stamp: <2018-12-04 09:28:56 (slane)>
+# Time-stamp: <2018-12-04 09:53:38 (slane)>
 .PHONY: all build-docker install-packages clean-manuscripts clobber
 
 all: install-packages data/data.rds manuscripts/manuscript.pdf
@@ -21,7 +21,12 @@ build-docker: .build.docker
 .PHONY: jags-test
 jags-test: figs/jags-testing/ca-cd-tests.pdf \
 	figs/jags-testing/ca-ld1-tests.pdf \
-	figs/jags-testing/ca-ld3-tests.pdf
+	figs/jags-testing/ca-ld3-tests.pdf \
+	figs/jags-testing/la1-cd-tests.pdf \
+	figs/jags-testing/la1-ld2-tests.pdf \
+	figs/jags-testing/la1-ld4-tests.pdf \
+	figs/jags-testing/la1-ld1-tests.pdf \
+	figs/jags-testing/la1-ld3-tests.pdf
 figs/jags-testing/ca-cd-tests.pdf: R/jags-testing-ca-cd.R \
 	scripts/constant.jag
 	mkdir -p figs/jags-testing \
@@ -34,7 +39,37 @@ figs/jags-testing/ca-ld1-tests.pdf: R/jags-testing-ca-ld1.R \
 	&& cd $(<D) \
 	&& Rscript --no-save --no-restore $(<F)
 
-figs/jags-testing/ca-ld3-tests.pdf: R/jags-testing-ca-ld3.R \
+figs/jags-testing/la1-cd-tests.pdf: R/jags-testing-la1-cd.R \
+	scripts/linear-arrival-constant-detection.jag
+	mkdir -p figs/jags-testing \
+	&& cd $(<D) \
+	&& Rscript --no-save --no-restore $(<F)
+
+figs/jags-testing/la1-ld2-tests.pdf: R/jags-testing-la1-ld2.R \
+	scripts/linear-arrival-linear-detection.jag
+	mkdir -p figs/jags-testing \
+	&& cd $(<D) \
+	&& Rscript --no-save --no-restore $(<F)
+
+figs/jags-testing/la1-ld4-tests.pdf: R/jags-testing-la1-ld4.R \
+	scripts/linear-arrival-linear-detection-site-specific.jag
+	mkdir -p figs/jags-testing \
+	&& cd $(<D) \
+	&& Rscript --no-save --no-restore $(<F)
+
+figs/jags-testing/la1-ld1-tests.pdf: R/jags-testing-la1-ld1.R \
+	scripts/linear-arrival-linear-detection.jag
+	mkdir -p figs/jags-testing \
+	&& cd $(<D) \
+	&& Rscript --no-save --no-restore $(<F)
+
+figs/jags-testing/la1-ld3-tests.pdf: R/jags-testing-la1-ld3.R \
+	scripts/linear-arrival-linear-detection-site-specific.jag
+	mkdir -p figs/jags-testing \
+	&& cd $(<D) \
+	&& Rscript --no-save --no-restore $(<F)
+
+figs/jags-testing/la1-ld3-tests.pdf: R/jags-testing-la1-ld3.R \
 	scripts/constant-arrival-linear-detection-site-specific.jag
 	mkdir -p figs/jags-testing \
 	&& cd $(<D) \

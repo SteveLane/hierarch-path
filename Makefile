@@ -1,5 +1,5 @@
 # Makefile
-# Time-stamp: <2018-12-04 09:23:44 (slane)>
+# Time-stamp: <2018-12-04 09:25:04 (slane)>
 .PHONY: all build-docker install-packages clean-manuscripts clobber
 
 all: install-packages data/data.rds manuscripts/manuscript.pdf
@@ -23,7 +23,7 @@ jags-test: figs/jags-testing/ca-cd-tests.pdf \
 	figs/jags-testing/ca-ld1-tests.pdf \
 	figs/jags-testing/ca-ld2-tests.pdf
 figs/jags-testing/ca-cd-tests.pdf: R/jags-testing-ca-cd.R \
-	scripts/constant-arrival-constant-detection.jag
+	scripts/constant.jag
 	mkdir -p figs/jags-testing \
 	&& cd $(<D) \
 	&& Rscript --no-save --no-restore $(<F)

@@ -1,0 +1,28 @@
+# Constant arrival rate, linear (site-specific) detection rate
+model {
+  # priors
+  # for the arrival rate
+  lambda ~ dgamma(hyper, 1)
+  # for the detection probability regression
+  alpha ~ dnorm(0, 1)
+  beta ~ dnorm(0, 1)
+  # standard deviation site effect
+  sigma.eta ~ dt(0, 1, 4)T(0,)
+
+  # models
+  for (i in 1:n) {
+    # model for the arrival process
+    N[i] ~ dpois(lambda)
+    # model for the detection process
+    count[i] ~ dbinom(p[i], N[i])
+
+    # regression for detection process
+    logit(p[i]) <- alpha + beta * x[i] + eta[site[i]]
+  }
+
+  # site coefficients
+  tau.eta <- pow(sigma.eta, -2)
+  for (j in 1:nsite) {
+    eta[j] ~ dnorm(0, tau.eta)
+  }
+}

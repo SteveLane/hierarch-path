@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Tuesday, 27 November 2018
 ## Synopsis: Function definitions for generating simulated detection rates.
-## Time-stamp: <2018-11-30 14:47:53 (slane)>
+## Time-stamp: <2018-12-03 11:25:12 (slane)>
 ################################################################################
 #' Generates detection rates
 #'
@@ -71,6 +71,60 @@ linear_detection2 <- function(df, ...) {
     D <- rbinom(n, N, p)
     dplyr::data_frame(
         p = p, D = D
+    )
+}
+
+################################################################################
+#' Generates detection rates
+#'
+#' \code{linear_detection3} calculates detections as a linear function of a
+#' time-varying covariate (independent to that used in the arrival rate), and a
+#' site-specific intercept.
+#'
+#' @param df data frame. Holds the arrival rate data. Must contain a \code{N}
+#'     column.
+#'
+#' @return dataframe containing the number of detections, D = Binomial(N, p) the
+#'     underlying detection probability p, and the predictor xvar_detection.
+#'     Where p = logit(-1 + X + site_effect), X = Normal(0.1 * time, 0.1),
+#'     site_effect = Normal(0, 0.5).
+linear_detection3 <- function(df, ...) {
+    time <- df[["time"]]
+    N <- df[["N"]]
+    n <- length(N)
+    X <- rnorm(n, mean = 0.1 * time, sd = 0.1)
+    site_effect <- rnorm(1, 0, 0.5)
+    p <- plogis(-1 + X + site_effect)
+    D <- rbinom(n, N, p)
+    dplyr::data_frame(
+        xvar_detection = X, p = p, D = D, site_effect
+    )
+}
+
+################################################################################
+#' Generates detection rates
+#'
+#' \code{linear_detection4} calculates detections as a linear function of the
+#' same covariate that is used in the arrival rate and site-specific intercept.
+#' Note: \code{linear_detection4} can only be used in conjuction with
+#' non-constant arrivals due to the presence of the covariate term.
+#'
+#' @param df data frame. Holds the arrival rate data. Must contain a
+#'     \code{xvar_arrival} and \code{N} column.
+#'
+#' @return dataframe containing the number of detections, D = Binomial(N, p) and
+#'     the underlying detection probability p.
+#'     Where p = logit(-3 + 0.6 * xvar_arrival + site_effect) and
+#'     site_effect = Normal(0, 0.5).
+linear_detection4 <- function(df, ...) {
+    N <- df[["N"]]
+    n <- length(N)
+    X <- df[["xvar_arrival"]]
+    site_effect <- rnorm(1, 0, 0.5)
+    p <- plogis(-3 + 0.6 * X + site_effect)
+    D <- rbinom(n, N, p)
+    dplyr::data_frame(
+        p = p, D = D, site_effect = site_effect
     )
 }
 

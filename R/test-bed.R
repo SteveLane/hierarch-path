@@ -3,8 +3,9 @@
 ## Title: Test Bed
 ## Author: Steve Lane
 ## Date: Monday, 19 November 2018
-## Synopsis: Script to test out functions etc.
-## Time-stamp: <2018-12-04 06:40:09 (slane)>
+## Synopsis: Script to test out functions etc. This script is used for active
+## development, so it may be broke. Don't rely on it!
+## Time-stamp: <2018-12-04 06:43:53 (slane)>
 ################################################################################
 ################################################################################
 library(here)

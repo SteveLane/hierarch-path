@@ -5,7 +5,7 @@
 ## Date: Tuesday, 04 December 2018
 ## Synopsis: This script tests the constant arrival, linear detection (with
 ## site-specific effects) JAGS model on simulated data.
-## Time-stamp: <2018-12-04 09:23:59 (slane)>
+## Time-stamp: <2018-12-04 09:26:17 (slane)>
 ################################################################################
 ################################################################################
 library(here)
@@ -31,7 +31,8 @@ ca_ld3_data <- sim_detections(
 ## fit the model using jags
 jags.data <- list(
     n = nrow(ca_ld3_data), count = ca_ld3_data[["D"]], hyper = 90,
-    x = ca_ld3_data[["xvar_detection"]], site = ca_ld3_data[["site"]]
+    x = ca_ld3_data[["xvar_detection"]], site = ca_ld3_data[["site"]],
+    nsite = max(ca_ld3_data[["site"]])
 )
 ca_ld3_fit <- jags(
     data = jags.data,

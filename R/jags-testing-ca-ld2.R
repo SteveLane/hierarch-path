@@ -5,7 +5,7 @@
 ## Date: Tuesday, 04 December 2018
 ## Synopsis: This script tests the constant arrival, linear detection (with
 ## site-specific effects) JAGS model on simulated data.
-## Time-stamp: <2018-12-04 09:19:36 (slane)>
+## Time-stamp: <2018-12-04 09:23:59 (slane)>
 ################################################################################
 ################################################################################
 library(here)
@@ -37,7 +37,7 @@ ca_ld3_fit <- jags(
     data = jags.data,
     parameters.to.save = c("lambda", "p", "N", "alpha", "beta", "sigma.eta"),
     model.file =
-        here("scripts/constant-arrival-linear-detection-ste-specific.jag"),
+        here("scripts/constant-arrival-linear-detection-site-specific.jag"),
     n.chains = 4, n.thin = 5, n.iter = 100000, n.burnin = 50000,
     parallel = TRUE, n.cores = 4
 )

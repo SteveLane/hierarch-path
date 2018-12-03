@@ -1,0 +1,24 @@
+# Linear arrival rate, linear detection rate
+# Can be used for both common predictors and separate predictors.
+model {
+  # priors
+  # for the arrival rate regression
+  alpha_arrival ~ dnorm(0, 1)
+  beta_arrival ~ dnorm(0, 1)
+  # for the detection probability regression
+  alpha_detection ~ dnorm(0, 1)
+  beta_detection ~ dnorm(0, 1)
+
+  # models
+  for (i in 1:n) {
+    # model for the arrival process
+    N[i] ~ dpois(exp(log_lambda[i]))
+    # model for the detection process
+    count[i] ~ dbinom(p[i], N[i])
+
+    # regression for arrival process
+    log_lambda[i] <- alpha_arrival + beta_arrival * x_arrival[i]
+    # regression for detection process
+    logit(p[i]) <- alpha_detection + beta_detection * x_detection[i]
+  }
+}

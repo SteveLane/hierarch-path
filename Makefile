@@ -1,8 +1,11 @@
 # Makefile
-# Time-stamp: <2018-11-14 13:02:39 (slane)>
+# Time-stamp: <2018-12-04 08:37:13 (slane)>
 .PHONY: all build-docker install-packages clean-manuscripts clobber
 
 all: install-packages data/data.rds manuscripts/manuscript.pdf
+
+# Set the directory of the Makefile.
+ROOT_DIR:=$(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 ################################################################################
 # Build docker container for reproducible environment
@@ -11,6 +14,18 @@ build-docker: .build.docker
 .build.docker: docker/Dockerfile
 	docker build --rm -t hierarch-path docker/; \
 	touch .build.docker
+
+################################################################################
+# Test the JAGS models
+#' jags-test: Runs script to test the JAGS models with simulated data.
+.PHONY: jags-test
+jags-test: .jags-test
+.jags-test: R/jags-testing.R
+	mkdir -p figs/jags-testing \
+	&& cd $(<D) \
+	&& Rscript --no-save --no-restore $(<F) \
+	&& cd $(ROOT_DIR) \
+	&& touch .jags-test
 
 ################################################################################
 # Rules to make data
@@ -57,3 +72,17 @@ scripts/installs.txt: scripts/strip-libs.sh R/ipak.R
 	./strip-libs.sh ../Rmd/ installs.txt; \
 	./strip-libs.sh ../manuscripts/ installs.txt; \
 	Rscript --no-save --no-restore ../R/ipak.R insts=installs.txt
+
+################################################################################
+# Show help on important targets.
+.PHONY: help
+help: Makefile
+	@echo '\nHelp on Hierarchical Pathway Simulation Targets\n----';
+	@sed -n "s/^#' //p" $(<F);
+	@echo '----';
+
+################################################################################
+# Rule to create dependency graph.
+deps-png:
+	docker run -v $$(pwd):/tmp/graph stevelane/makedeps-graph; \
+	mv deps.* figs/

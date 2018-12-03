@@ -1,5 +1,5 @@
 # Makefile
-# Time-stamp: <2018-12-04 08:37:13 (slane)>
+# Time-stamp: <2018-12-04 09:23:44 (slane)>
 .PHONY: all build-docker install-packages clean-manuscripts clobber
 
 all: install-packages data/data.rds manuscripts/manuscript.pdf
@@ -17,15 +17,28 @@ build-docker: .build.docker
 
 ################################################################################
 # Test the JAGS models
-#' jags-test: Runs script to test the JAGS models with simulated data.
+#' jags-test: Runs scripts to test the JAGS models with simulated data.
 .PHONY: jags-test
-jags-test: .jags-test
-.jags-test: R/jags-testing.R
+jags-test: figs/jags-testing/ca-cd-tests.pdf \
+	figs/jags-testing/ca-ld1-tests.pdf \
+	figs/jags-testing/ca-ld2-tests.pdf
+figs/jags-testing/ca-cd-tests.pdf: R/jags-testing-ca-cd.R \
+	scripts/constant-arrival-constant-detection.jag
 	mkdir -p figs/jags-testing \
 	&& cd $(<D) \
-	&& Rscript --no-save --no-restore $(<F) \
-	&& cd $(ROOT_DIR) \
-	&& touch .jags-test
+	&& Rscript --no-save --no-restore $(<F)
+
+figs/jags-testing/ca-ld1-tests.pdf: R/jags-testing-ca-ld1.R \
+	scripts/constant-arrival-linear-detection.jag
+	mkdir -p figs/jags-testing \
+	&& cd $(<D) \
+	&& Rscript --no-save --no-restore $(<F)
+
+figs/jags-testing/ca-ld2-tests.pdf: R/jags-testing-ca-ld2.R \
+	scripts/constant-arrival-linear-detection-site-specific.jag
+	mkdir -p figs/jags-testing \
+	&& cd $(<D) \
+	&& Rscript --no-save --no-restore $(<F)
 
 ################################################################################
 # Rules to make data

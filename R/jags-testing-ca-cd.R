@@ -3,9 +3,9 @@
 ## Title: JAGS Testing
 ## Author: Steve Lane
 ## Date: Tuesday, 04 December 2018
-## Synopsis: This script tests the JAGS models on simulated data. It is used to
-## test each one of the models in turn.
-## Time-stamp: <2018-12-04 08:37:55 (slane)>
+## Synopsis: This script tests the constant arrival, constant detection JAGS
+## model on simulated data.
+## Time-stamp: <2018-12-04 09:19:42 (slane)>
 ################################################################################
 ################################################################################
 library(here)
@@ -46,6 +46,10 @@ ca_cd_samples <- as.matrix(ca_cd_fit$samples, chains = TRUE) %>%
 ## plot a selection of posterior estimates of N
 pars <- paste0("N[", sample(1:100, 9), "]")
 pdf(file = here("figs/jags-testing/ca-cd-tests.pdf"))
-mcmc_hist(ca_cd_samples, pars = pars)
-mcmc_hist(ca_cd_samples, pars = c("lambda", "p"))
+mcmc_hist(ca_cd_samples, pars = pars) +
+    geom_vline(xintercept = 75, col = "maroon")
+mcmc_hist(ca_cd_samples, pars = "lambda") +
+    geom_vline(xintercept = 75, col = "maroon")
+mcmc_hist(ca_cd_samples, pars = "p") +
+    geom_vline(xintercept = 0.7, col = "maroon")
 dev.off()

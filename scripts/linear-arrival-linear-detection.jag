@@ -3,8 +3,8 @@
 model {
   # priors
   # for the arrival rate regression
-  alpha_arrival ~ dnorm(15, 1)
-  beta_arrival ~ dnorm(15, 1)
+  alpha_arrival ~ dnorm(5, 1)
+  beta_arrival ~ dnorm(5, 1)
   # for the detection probability regression
   alpha_detection ~ dnorm(0, 1)
   beta_detection ~ dnorm(0, 1)

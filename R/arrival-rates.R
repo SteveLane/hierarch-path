@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Friday, 16 November 2018
 ## Synopsis: Functions for generating simulated arrival and detection data.
-## Time-stamp: <2018-11-30 14:34:58 (slane)>
+## Time-stamp: <2018-12-04 12:28:36 (slane)>
 ################################################################################
 ################################################################################
 #' Generates arrival rates, depending on the type of model specified.
@@ -52,16 +52,16 @@ n <- nrow(df)
 #' @param df data frame. Must contain a \code{time} column.
 #' 
 #' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
-#'     arrival rate as Poisson(10 + 10X). The (true) underlying arrival rate is
-#'     also returned.
+#'     arrival rate as Poisson(lambda), log(lambda) = 10 + 10*X. The (true)
+#'     underlying log arrival rate is also returned.
 linear_arrival1 <- function(df, ...) {
     time <- df[["time"]]
     n <- length(time)
     xvar <- 5 + rnorm(n, mean = 0.25 * time, sd = 1)
-    rate <- 10 + 10*xvar
-    n_arrival <- rpois(n, rate)
+    log_rate <- log(10 + 10*xvar)
+    n_arrival <- rpois(n, exp(log_rate))
     dplyr::data_frame(
-        xvar_arrival = xvar, N = n_arrival, rate = rate
+        xvar_arrival = xvar, N = n_arrival, log_rate = log_rate
     )
 }
 
@@ -71,17 +71,17 @@ linear_arrival1 <- function(df, ...) {
 #' @param df data frame. Must contain a \code{time} column.
 #' 
 #' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
-#'     arrival rate as Poisson(10 + 10X + site), where site is N(0, 3). The
-#'     (true) underlying arrival rate is also returned. 
+#'     arrival rate as Poisson(lambda), log(lambda) = 10 + 10X + site, where
+#'     site is N(0, 3). The (true) underlying log arrival rate is also returned. 
 linear_arrival2 <- function(df, ...) {
     time <- df[["time"]]
     site_effect <- rnorm(1, 0, 3)
     n <- length(time)
     xvar <- 5 + rnorm(n, mean = 0.25 * time, sd = 1)
-    rate <- 10 + 10*xvar + site_effect
-    n_arrival <- rpois(n, rate)
+    log_rate <- log(10 + 10*xvar + site_effect)
+    n_arrival <- rpois(n, exp(log_rate))
     dplyr::data_frame(
-        xvar_arrival = xvar, N = n_arrival, rate = rate,
+        xvar_arrival = xvar, N = n_arrival, log_rate = log_rate,
         site_effect = site_effect
     )
 }
@@ -92,19 +92,20 @@ linear_arrival2 <- function(df, ...) {
 #' @param df data frame. Must contain a \code{time} column.
 #' 
 #' @return dataframe containing the X variable as X = 5 + N(0.25t, 1) and the
-#'     arrival rate as Poisson(10 + (10 + site_slope)X + site), where site is
-#'     N(0, 3) and site_slope is N(0, 1). The (true) underlying arrival rate is
-#'     also returned.
+#'     arrival rate as Poisson(lambda),
+#'     log(lambda) = 10 + (10 + site_slope)X + site, where site is
+#'     N(0, 3) and site_slope is N(0, 1). The (true) underlying log arrival rate
+#'     is also returned.
 linear_arrival3 <- function(df, ...) {
     time <- df[["time"]]
     site_effect <- rnorm(1, 0, 3)
     site_slope <- rnorm(1, 0, 1)
     n <- length(time)
     xvar <- 5 + rnorm(n, mean = 0.25 * time, sd = 1)
-    rate <- 10 + (10 + site_slope)*xvar + site_effect
-    n_arrival <- rpois(n, rate)
+    log_rate <- log(10 + (10 + site_slope)*xvar + site_effect)
+    n_arrival <- rpois(n, exp(log_rate))
     dplyr::data_frame(
-        xvar_arrival = xvar, N = n_arrival, rate = rate,
+        xvar_arrival = xvar, N = n_arrival, log_rate = log_rate,
         site_effect = site_effect, site_slope = site_slope
     )
 }

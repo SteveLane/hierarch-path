@@ -5,7 +5,7 @@
 ## Date: Tuesday, 04 December 2018
 ## Synopsis: This script tests the linear arrival, linear detection (using
 ## arrival covariate) JAGS model on simulated data.
-## Time-stamp: <2018-12-04 12:13:49 (slane)>
+## Time-stamp: <2018-12-04 15:10:39 (slane)>
 ################################################################################
 ################################################################################
 library(here)
@@ -40,7 +40,7 @@ la1_ld2_fit <- jags(
     parameters.to.save = c("p", "N", "alpha_arrival", "beta_arrival",
         "alpha_detection", "beta_detection"),
     model.file = here("scripts/linear-arrival-linear-detection.jag"),
-    n.chains = 4, n.thin = 5, n.iter = 100000, n.burnin = 50000,
+    n.chains = 4, n.thin = 5, n.iter = 500000, n.burnin = 250000,
     parallel = TRUE, n.cores = 4
 )
 la1_ld2_samples <- as.matrix(la1_ld2_fit$samples, chains = TRUE) %>%
@@ -78,9 +78,9 @@ pl_N <- ggplot(Nsamps, aes(x = N, y = ..density..)) +
 pdf(file = here("figs/jags-testing/la1-ld2-tests.pdf"))
 pl_N
 mcmc_hist(la1_ld2_samples, pars = "alpha_arrival") +
-    geom_vline(xintercept = 10, col = "maroon")
+    geom_vline(xintercept = 3, col = "maroon")
 mcmc_hist(la1_ld2_samples, pars = "beta_arrival") +
-    geom_vline(xintercept = 10, col = "maroon")
+    geom_vline(xintercept = 0.1, col = "maroon")
 mcmc_hist(la1_ld2_samples, pars = "alpha_detection") +
     geom_vline(xintercept = -3, col = "maroon")
 mcmc_hist(la1_ld2_samples, pars = "beta_detection") +

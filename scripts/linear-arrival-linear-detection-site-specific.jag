@@ -3,13 +3,15 @@
 model {
   # priors
   # for the arrival rate regression
-  alpha_arrival ~ dnorm(15, 1)
-  beta_arrival ~ dnorm(15, 1)
+  alpha_arrival ~ dnorm(5, 1)
+  beta_arrival ~ dnorm(5, 1)
   # for the detection probability regression
   alpha_detection ~ dnorm(0, 1)
   beta_detection ~ dnorm(0, 1)
   # standard deviation site effect
-  sigma.eta ~ dt(0, 1, 4)T(0,)
+  # sigma.eta ~ dt(0, 1, 4)T(0,)
+  # Doesn't like the distribution here for some reason...
+  sigma.eta <- 0.5
 
   # models
   for (i in 1:n) {

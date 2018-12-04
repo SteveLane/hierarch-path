@@ -5,7 +5,7 @@
 ## Date: Tuesday, 04 December 2018
 ## Synopsis: This script tests the linear arrival, constant detection JAGS
 ## model on simulated data.
-## Time-stamp: <2018-12-04 12:03:16 (slane)>
+## Time-stamp: <2018-12-04 14:56:13 (slane)>
 ################################################################################
 ################################################################################
 library(here)
@@ -78,9 +78,9 @@ pl_N
 mcmc_hist(la1_cd_samples, pars = "p") +
     geom_vline(xintercept = 0.7, col = "maroon")
 mcmc_hist(la1_cd_samples, pars = "alpha_arrival") +
-    geom_vline(xintercept = 10, col = "maroon")
+    geom_vline(xintercept = 3, col = "maroon")
 mcmc_hist(la1_cd_samples, pars = "beta_arrival") +
-    geom_vline(xintercept = 10, col = "maroon")
+    geom_vline(xintercept = 0.1, col = "maroon")
 dev.off()
 ## Samples
 summaries <- la1_cd_samples %>%

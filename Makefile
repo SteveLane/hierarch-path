@@ -1,5 +1,5 @@
 # Makefile
-# Time-stamp: <2018-12-04 09:55:57 (slane)>
+# Time-stamp: <2018-12-04 12:59:00 (slane)>
 .PHONY: all build-docker install-packages clean-manuscripts clobber
 
 all: install-packages data/data.rds manuscripts/manuscript.pdf
@@ -24,9 +24,8 @@ jags-test: figs/jags-testing/ca-cd-tests.pdf \
 	figs/jags-testing/ca-ld3-tests.pdf \
 	figs/jags-testing/la1-cd-tests.pdf \
 	figs/jags-testing/la1-ld2-tests.pdf \
-	figs/jags-testing/la1-ld4-tests.pdf \
-	figs/jags-testing/la1-ld1-tests.pdf \
-	figs/jags-testing/la1-ld3-tests.pdf
+	figs/jags-testing/la1-ld1-tests.pdf
+
 figs/jags-testing/ca-cd-tests.pdf: R/jags-testing-ca-cd.R \
 	scripts/constant.jag
 	mkdir -p figs/jags-testing \
@@ -57,11 +56,12 @@ figs/jags-testing/la1-ld2-tests.pdf: R/jags-testing-la1-ld2.R \
 	&& cd $(<D) \
 	&& Rscript --no-save --no-restore $(<F)
 
-figs/jags-testing/la1-ld4-tests.pdf: R/jags-testing-la1-ld4.R \
-	scripts/linear-arrival-linear-detection-site-specific.jag
-	mkdir -p figs/jags-testing \
-	&& cd $(<D) \
-	&& Rscript --no-save --no-restore $(<F)
+# Removed from make, can't get working at the moment.
+# figs/jags-testing/la1-ld4-tests.pdf: R/jags-testing-la1-ld4.R \
+# 	scripts/linear-arrival-linear-detection-site-specific.jag
+# 	mkdir -p figs/jags-testing \
+# 	&& cd $(<D) \
+# 	&& Rscript --no-save --no-restore $(<F)
 
 figs/jags-testing/la1-ld1-tests.pdf: R/jags-testing-la1-ld1.R \
 	scripts/linear-arrival-linear-detection.jag
@@ -69,11 +69,12 @@ figs/jags-testing/la1-ld1-tests.pdf: R/jags-testing-la1-ld1.R \
 	&& cd $(<D) \
 	&& Rscript --no-save --no-restore $(<F)
 
-figs/jags-testing/la1-ld3-tests.pdf: R/jags-testing-la1-ld3.R \
-	scripts/linear-arrival-linear-detection-site-specific.jag
-	mkdir -p figs/jags-testing \
-	&& cd $(<D) \
-	&& Rscript --no-save --no-restore $(<F)
+# Removed from make, can't get working at the moment.
+# figs/jags-testing/la1-ld3-tests.pdf: R/jags-testing-la1-ld3.R \
+# 	scripts/linear-arrival-linear-detection-site-specific.jag
+# 	mkdir -p figs/jags-testing \
+# 	&& cd $(<D) \
+# 	&& Rscript --no-save --no-restore $(<F)
 
 ################################################################################
 # Rules to make data

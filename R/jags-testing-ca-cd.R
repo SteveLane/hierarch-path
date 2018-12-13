@@ -5,7 +5,7 @@
 ## Date: Tuesday, 04 December 2018
 ## Synopsis: This script tests the constant arrival, constant detection JAGS
 ## model on simulated data.
-## Time-stamp: <2018-12-04 09:19:42 (slane)>
+## Time-stamp: <2018-12-13 15:55:47 (slane)>
 ################################################################################
 ################################################################################
 library(here)
@@ -44,9 +44,8 @@ ca_cd_samples <- as.matrix(ca_cd_fit$samples, chains = TRUE) %>%
     as_tibble() %>%
     rename(Chain = CHAIN)
 ## plot a selection of posterior estimates of N
-pars <- paste0("N[", sample(1:100, 9), "]")
 pdf(file = here("figs/jags-testing/ca-cd-tests.pdf"))
-mcmc_hist(ca_cd_samples, pars = pars) +
+mcmc_hist(ca_cd_samples, pars = "N") +
     geom_vline(xintercept = 75, col = "maroon")
 mcmc_hist(ca_cd_samples, pars = "lambda") +
     geom_vline(xintercept = 75, col = "maroon")

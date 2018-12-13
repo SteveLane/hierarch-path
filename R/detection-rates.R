@@ -4,7 +4,7 @@
 ## Author: Steve Lane
 ## Date: Tuesday, 27 November 2018
 ## Synopsis: Function definitions for generating simulated detection rates.
-## Time-stamp: <2018-12-03 11:25:12 (slane)>
+## Time-stamp: <2018-12-13 16:05:12 (slane)>
 ################################################################################
 #' Generates detection rates
 #'
@@ -22,6 +22,29 @@ constant_detection <- function(df, p = 0.6) {
     D <- rbinom(n, N, p)
     dplyr::data_frame(
         p = p, D = D
+    )
+}
+
+################################################################################
+#' Generates detection rates
+#'
+#' \code{interior_constant_detection} simulates detections at the second
+#' (interior) level at a constant rate. Data must contain the true number
+#' arriving, N, and the number detected initially.
+#'
+#' @param df data frame. Holds the arrival rate and initial detection data.
+#' @param p_interior numeric. Constant detection rate.
+#'
+#' @return dataframe containing the number of interior detections,
+#'     D_int = Binomial(N - D, p_interior) and the underlying detection
+#'     probability p_interior.
+constant_detection_interior <- function(df, p_interior = 0.6) {
+    N <- df[["N"]]
+    D <- df[["D"]]
+    n <- length(N)
+    D_interior <- rbinom(n, N - D, p_interior)
+    dplyr::data_frame(
+        p_interior = p_interior, D_interior = D_interior
     )
 }
 
@@ -145,7 +168,7 @@ linear_detection4 <- function(df, ...) {
 #'
 #' @return data frame consisting of simulation replicates.
 sim_detections <- function(arrival_model, detection_model, T, S, r,
-                           D = 50, p = 0.6) {
+                           D = 50, p = 0.6, p_interior = 0.6) {
     arrive_df <- replicate(
         n = r,
         expr = arrivals(T = T, S = S, model = arrival_model, D = D),
@@ -156,6 +179,53 @@ sim_detections <- function(arrival_model, detection_model, T, S, r,
     detect_df <- tidyr::nest(detect_df)
     detect_df <- dplyr::mutate(detect_df,
         df = purrr::map(data, detection_model, p = p)
+    )
+    detect_df <- tidyr::unnest(detect_df)
+    detect_df
+}
+
+################################################################################
+#' Simulates r replicates of arrival, detection and interior detection rates.
+#'
+#' \code{sim_detections_interior} simulates the full arrival and detection
+#' process. It first calls \code{sim_arrivals} to generate the arrivals, then
+#' maps over the resultant data frame to generate the detections.
+#'
+#' @param arrival_model function name. Passed as an unquoted variable.
+#' @param detection_model function name. Passed as an unquoted variable.
+#' @param interior_detection_model function name. Passed as an unquoted
+#'     variable.
+#' @param T Integer. Number of time periods.
+#' @param S Integer. Number of sites.
+#' @param r integer. Number of replicates for simulation.
+#' @param D integer. Arrival rate for constant model, defaults to 50.
+#' @param p numeric. Detection rate for constant model.
+#' @param p numeric. Interior detection rate for constant model.
+#'
+#' @return data frame consisting of simulation replicates.
+sim_detections_interior <- function(arrival_model, detection_model,
+                                    interior_detection_model, T, S, r,
+                                    D = 50, p = 0.6, p_interior = 0.6) {
+    arrive_df <- replicate(
+        n = r,
+        expr = arrivals(T = T, S = S, model = arrival_model, D = D),
+        simplify = FALSE
+    )
+    arrive_df <- dplyr::bind_rows(arrive_df, .id = "replicate")
+    detect_df <- dplyr::group_by(arrive_df, replicate, site)
+    ## First level detections
+    detect_df <- tidyr::nest(detect_df)
+    detect_df <- dplyr::mutate(detect_df,
+        df = purrr::map(data, detection_model, p = p)
+    )
+    detect_df <- tidyr::unnest(detect_df)
+    ## Second level detections
+    detect_df <- dplyr::group_by(detect_df, replicate, site)
+    detect_df <- tidyr::nest(detect_df)
+    detect_df <- dplyr::mutate(detect_df,
+        df = purrr::map(
+            data, interior_detection_model,
+            p_interior = p_interior)
     )
     detect_df <- tidyr::unnest(detect_df)
     detect_df

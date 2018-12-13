@@ -1,0 +1,26 @@
+# Linear arrival rate, constant detection rate
+model {
+  # priors
+  # for the arrival rate regression
+  alpha_arrival ~ dnorm(5, 1)
+  beta_arrival ~ dnorm(5, 1)
+  # for the detection probability
+  p ~ dbeta(p_alpha, p_beta)
+  # for the interior detection probability
+  p_interior ~ dbeta(p_alpha_interior, p_beta_interior)
+
+  # models
+  for (i in 1:n) {
+    # model for the arrival process
+    N[i] ~ dpois(exp(log_lambda[i]))
+
+    # regression for arrival process
+    log_lambda[i] <- alpha_arrival + beta_arrival * x[i]
+    
+    # model for the detection process
+    count[i] ~ dbinom(p, N[i])
+
+    # model for the interior detection process
+    interior_count[i] ~ dbinom(p_interior, N[i] - count[i])
+  }
+}

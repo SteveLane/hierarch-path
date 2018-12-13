@@ -1,0 +1,21 @@
+# Constant arrival rate, constant detection rate, constant interior detection
+# rate. This model seems far fetched...
+model {
+  # priors
+  # for the arrival rate
+  lambda ~ dgamma(hyper, 1)
+  # for the detection probability
+  p ~ dbeta(2, 2)
+  # for the interior detection probability
+  p_interior ~ dbeta(2, 2)
+
+  # models
+  # model for the arrival process
+  N ~ dpois(lambda)
+  for (i in 1:n) {
+    # model for the detection process
+    count[i] ~ dbinom(p, N)
+    # model for the interior detection process
+    interior_count[i] ~ dbinom(p_interior, N - count[i])
+  }
+}

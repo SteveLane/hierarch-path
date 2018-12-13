@@ -2,8 +2,8 @@
 model {
   # priors
   # for the arrival rate regression
-  alpha_arrival ~ dnorm(5, 1)
-  beta_arrival ~ dnorm(5, 1)
+  alpha_arrival ~ dnorm(1, 5)
+  beta_arrival ~ dnorm(1, 5)
   # for the detection probability
   p ~ dbeta(p_alpha, p_beta)
   # for the interior detection probability

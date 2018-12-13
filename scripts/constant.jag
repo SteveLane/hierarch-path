@@ -7,10 +7,10 @@ model {
   p ~ dbeta(2, 2)
 
   # models
+  # model for the arrival process
+  N ~ dpois(lambda)
   for (i in 1:n) {
-    # model for the arrival process
-    N[i] ~ dpois(lambda)
     # model for the detection process
-    count[i] ~ dbinom(p, N[i])
+    count[i] ~ dbinom(p, N)
   }
 }

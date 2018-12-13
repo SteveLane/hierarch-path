@@ -2,15 +2,15 @@
 model {
   # priors
   # for the arrival rate regression
-  alpha_arrival ~ dnorm(0, 1)
-  beta_arrival ~ dnorm(0, 1)
+  alpha_arrival ~ dnorm(5, 1)
+  beta_arrival ~ dnorm(5, 1)
   # for the detection probability
-  p ~ dbeta(2, 2)
+  p ~ dbeta(p_alpha, p_beta)
 
   # models
   for (i in 1:n) {
     # model for the arrival process
-    N[i] ~ dpois(exp(log_lambda[i]))
+    N[i] ~ dpois(exp(log_lambda[i]))T(trunc[i],)
     # model for the detection process
     count[i] ~ dbinom(p, N[i])
 

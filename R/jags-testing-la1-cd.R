@@ -5,7 +5,7 @@
 ## Date: Tuesday, 04 December 2018
 ## Synopsis: This script tests the linear arrival, constant detection JAGS
 ## model on simulated data.
-## Time-stamp: <2018-12-04 14:56:13 (slane)>
+## Time-stamp: <2018-12-06 10:40:40 (slane)>
 ################################################################################
 ################################################################################
 library(here)
@@ -32,7 +32,8 @@ la1_cd_data <- sim_detections(
 ## fit the model using jags
 jags.data <- list(
     n = nrow(la1_cd_data), count = la1_cd_data[["D"]],
-    x = la1_cd_data[["xvar_arrival"]]
+    x = la1_cd_data[["xvar_arrival"]], trunc = la1_cd_data[["D"]],
+    p_alpha = 35, p_beta = 15
 )
 la1_cd_fit <- jags(
     data = jags.data,
